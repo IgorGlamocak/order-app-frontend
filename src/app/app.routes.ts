@@ -13,5 +13,5 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'services', component: ServicesComponent },
   { path: 'orders', component: OrdersComponent },
-  { path: 'users', component: UsersComponent, canActivate: [AdminGuard],},
+  { path: 'users', component: UsersComponent, canActivate: [AdminGuard] },
 ];

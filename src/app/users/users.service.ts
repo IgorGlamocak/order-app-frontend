@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environment';
-import { Observable }   from 'rxjs';
+import { Observable } from 'rxjs';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -9,7 +9,7 @@ export interface User {
   id: number;
   fullName: string;
   email: string;
-  role: 'user'|'admin';
+  role: 'user' | 'admin';
   avatar: string | null;
 }
 

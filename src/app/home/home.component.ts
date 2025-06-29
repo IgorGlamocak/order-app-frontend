@@ -17,7 +17,13 @@ import { HeaderComponent } from '../components/header.component';
             </h1>
 
             <p class="max-w-2xl mt-4 text-gray-500 dark:text-gray-300">
-              Our hand-picked group of professionals brings together diverse talents and shared passion for excellence. From cutting-edge full-stack development to inspired graphic design, each member is committed to delivering top-tier solutions and exceptional service. We collaborate closely, harnessing our collective expertise to transform ideas into reality and ensure every project exceeds expectations.
+              Our hand-picked group of professionals brings together diverse
+              talents and shared passion for excellence. From cutting-edge
+              full-stack development to inspired graphic design, each member is
+              committed to delivering top-tier solutions and exceptional
+              service. We collaborate closely, harnessing our collective
+              expertise to transform ideas into reality and ensure every project
+              exceeds expectations.
             </p>
           </div>
 

@@ -25,11 +25,10 @@ import { UserFormModalComponent } from './user-form-modal';
             Edit
           </button>
         </div>
-      }
-      @empty {
+      } @empty {
         <p>Loading users…</p>
       }
-      @if(formOpen()) {
+      @if (formOpen()) {
         <app-user-form-modal
           [isOpen]="formOpen()"
           [initial]="selectedUser()"
@@ -39,13 +38,13 @@ import { UserFormModalComponent } from './user-form-modal';
         ></app-user-form-modal>
       }
     </div>
-  `
+  `,
 })
 export class UsersComponent {
   private svc = inject(UsersService);
   users$ = this.svc.getAll();
 
-  formOpen    = signal(false);
+  formOpen = signal(false);
   selectedUser = signal<User | null>(null);
 
   openEdit(u: User) {

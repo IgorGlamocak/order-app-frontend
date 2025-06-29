@@ -17,14 +17,14 @@ import { AuthService } from '../auth/auth.service';
   template: `
     <div class="p-6">
       @if (authService.isAdmin()) {
-      <div class="flex justify-end mb-6">
-        <button
-          class="px-4 py-2 bg-green-600 text-white rounded"
-          (click)="openCreate()"
-        >
-          Add Service
-        </button>
-      </div>
+        <div class="flex justify-end mb-6">
+          <button
+            class="px-4 py-2 bg-green-600 text-white rounded"
+            (click)="openCreate()"
+          >
+            Add Service
+          </button>
+        </div>
       }
       <div
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto justify-center"
@@ -33,14 +33,14 @@ import { AuthService } from '../auth/auth.service';
           <div
             class="flex flex-col bg-white rounded-lg shadow-lg overflow-hidden dark:bg-gray-800 relative"
           >
-          @if (authService.isAdmin()) {
-            <button
-              class="absolute top-2 right-2 p-1 text-2xl font-bold text-gray-500 hover:text-white"
-              (click)="openMenu(service, $event)"
-            >
-              ⋮
-            </button>
-          }
+            @if (authService.isAdmin()) {
+              <button
+                class="absolute top-2 right-2 p-1 text-2xl font-bold text-gray-500 hover:text-white"
+                (click)="openMenu(service, $event)"
+              >
+                ⋮
+              </button>
+            }
             <div
               class="h-48 bg-gray-200 bg-cover bg-center"
               [style.background-image]="
@@ -102,9 +102,12 @@ import { AuthService } from '../auth/auth.service';
           <div class="bg-white p-6 rounded shadow-lg">
             <p class="mb-4">Are you sure you want to delete this service?</p>
             <div class="flex justify-end space-x-2">
-              <button 
-              class="px-3 py-1 bg-gray-400 text-white rounded"
-              (click)="cancelDelete()">No</button>
+              <button
+                class="px-3 py-1 bg-gray-400 text-white rounded"
+                (click)="cancelDelete()"
+              >
+                No
+              </button>
               <button
                 class="px-3 py-1 bg-red-600 text-white rounded"
                 (click)="delete()"
@@ -126,12 +129,11 @@ import { AuthService } from '../auth/auth.service';
   `,
 })
 export class ServicesComponent implements OnInit {
-  constructor(
-    public authService:AuthService
-  ) {}
+  constructor(public authService: AuthService) {}
   private svc = inject(ServicesService);
   services$ = this.svc.getAll();
-  placeholderImg ='https://img.freepik.com/premium-vector/service-outline-doodle-design-illustration-symbol_848977-787.jpg';
+  placeholderImg =
+    'https://img.freepik.com/premium-vector/service-outline-doodle-design-illustration-symbol_848977-787.jpg';
 
   formOpen = signal(false);
   isEditing = signal(false);

@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService }     from '../auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [ RouterLink, RouterLinkActive, CommonModule ],
+  imports: [RouterLink, RouterLinkActive, CommonModule],
   template: `
     <nav class="bg-white shadow dark:bg-gray-800">
       <div
@@ -35,14 +35,14 @@ import { AuthService }     from '../auth/auth.service';
           >
             Orders
           </a>
-          @if (authService.isAdmin()){
-          <a
-            routerLink="/users"
-            routerLinkActive="!border-blue-500 text-gray-800 dark:text-gray-200"
-            class="transition-colors duration-300 transform mx-1.5 sm:mx-6 border-b-2 border-transparent hover:border-blue-500"
-          >
-            Users
-          </a>
+          @if (authService.isAdmin()) {
+            <a
+              routerLink="/users"
+              routerLinkActive="!border-blue-500 text-gray-800 dark:text-gray-200"
+              class="transition-colors duration-300 transform mx-1.5 sm:mx-6 border-b-2 border-transparent hover:border-blue-500"
+            >
+              Users
+            </a>
           }
         </div>
         <div class="flex space-x-4">
@@ -65,7 +65,7 @@ import { AuthService }     from '../auth/auth.service';
         </div>
       </div>
     </nav>
-  `
+  `,
 })
 export class HeaderComponent {
   constructor(

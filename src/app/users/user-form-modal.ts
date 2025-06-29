@@ -131,9 +131,10 @@ export class UserFormModalComponent implements OnChanges {
       dto.password = raw.password;
     }
 
-    const op$ = this.editing && this.initial
-      ? this.svc.update(this.initial.id, dto)
-      : this.svc.create(dto);
+    const op$ =
+      this.editing && this.initial
+        ? this.svc.update(this.initial.id, dto)
+        : this.svc.create(dto);
 
     op$
       .pipe(
