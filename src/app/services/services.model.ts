@@ -36,6 +36,10 @@ export interface Service {
 
   price: number;
 
+  executionTime: string;
+
+  imageUrl: string;
+
   orders: Order[];
 }
 

@@ -1,31 +1,55 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {ServicesService} from './services.service';
 import {AsyncPipe} from '@angular/common';
+import {SchedulerComponent} from './scheduler/scheduler.component';
 
 
 @Component({
   selector: 'app-services',
   imports: [
-    AsyncPipe
+    AsyncPipe,
+    SchedulerComponent
   ],
   template: `
-    @for (service of services$ | async; track service.id){
-      <div class="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
-        <div class="w-full h-64 bg-gray-300 bg-center bg-cover rounded-lg shadow-md" style="background-image: url(https://images.unsplash.com/photo-1521903062400-b80f2cb8cb9d?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1050&q=80)"></div>
+      <!-- Container to center and pad the grid -->
+    <div class="mx-auto max-w-7xl px-4 py-10">
+      <h2 class="text-3xl font-bold mb-8 dark:text-white">Our Services</h2>
 
-        <div class="w-56 -mt-10 overflow-hidden bg-white rounded-lg shadow-lg md:w-64 dark:bg-gray-800">
-          <h3 class="py-2 font-bold tracking-wide text-center text-gray-800 uppercase dark:text-white" >{{service.serviceName}}</h3>
-          <p class="py-2 tracking-wide text-center text-gray-800 dark:text-white" >{{service.description}}</p>
-
-          <div class="flex items-center justify-between px-3 py-2 bg-gray-200 dark:bg-gray-700">
-            <span class="font-bold text-gray-800 dark:text-gray-200">{{service.price}}</span>
-            <button class="px-2 py-1 text-xs font-semibold text-white uppercase transition-colors duration-300 transform bg-gray-800 rounded hover:bg-gray-700 dark:hover:bg-gray-600 focus:bg-gray-700 dark:focus:bg-gray-600 focus:outline-none">Add to cart</button>
+      <!-- GRID WRAPPER -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        @for (service of services$ | async; track service.id) {
+          <!-- CARD -->
+          <div class="flex flex-col bg-white rounded-lg shadow-lg overflow-hidden dark:bg-gray-800">
+            <!-- IMAGE -->
+            <div
+              class="h-48 bg-gray-200 bg-cover bg-center"
+              style="background-image: url('https://images.unsplash.com/photo-1521903062400-b80f2cb8cb9d?...');">
+            </div>
+            <!-- BODY -->
+            <div class="flex-1 p-4 flex flex-col">
+              <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">
+                {{ service.serviceName }}
+              </h3>
+              <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                {{ service.description }}
+              </p>
+              <!-- FOOTER -->
+              <div class="mt-auto flex items-center justify-between">
+                <span class="text-lg font-bold text-gray-800 dark:text-gray-200">
+                  From {{ service.price }}€
+                </span>
+                <app-scheduler [service]="service"></app-scheduler>
+              </div>
+            </div>
           </div>
-        </div>
+        }
+        @empty {
+          <p class="col-span-full text-center text-gray-500 dark:text-gray-400">
+            You are not logged in
+          </p>
+        }
       </div>
-    } @empty {
-      <p>You are not logged in</p>
-    }
+    </div>
   `,
   styles: ``
 })
