@@ -11,7 +11,7 @@ export class ServicesService {
 
   token = localStorage.getItem('token');
   headers = new HttpHeaders({
-    'Authorization': `Bearer ${this.token}`  // Use "Bearer" if that’s your token type
+    'Authorization': `Bearer ${this.token}`
   });
 
   getAll() {
@@ -22,12 +22,14 @@ export class ServicesService {
     return this.http.delete<Service>(`${this.baseUrl}/services/${id}`, { headers: this.headers });
   }
 
-  editService(id: number) {
-    return this.http.patch(`${this.baseUrl}/services/${id}`, { headers: this.headers });
-  }
+  createService(dto: Omit<Service, 'id'>) {
+  return this.http.post<Service>(`${this.baseUrl}/services`, dto, { headers: this.headers });
+}
 
-  createService() {
-    return this.http.post(`${this.baseUrl}/services/`, { headers: this.headers });
+  updateService(id: number, dto: Partial<Omit<Service, 'id'>>) {
+    return this.http.patch<Service>(`${this.baseUrl}/services/${id}`, dto, { headers: this.headers });
   }
 
 }
+export type { Service };
+

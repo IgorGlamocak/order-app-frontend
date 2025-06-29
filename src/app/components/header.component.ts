@@ -13,15 +13,15 @@ import { AuthService } from '../auth/auth.service';
         <div class="flex space-x-4">
           <a routerLink="/"
              class="text-gray-800 transition-colors duration-300 transform dark:text-gray-200 border-b-2 border-blue-500 mx-1.5 sm:mx-6">
-            home
+            Home
           </a>
           <a routerLink="/services"
              class="border-b-2 border-transparent hover:text-gray-800 transition-colors duration-300 transform dark:hover:text-gray-200 hover:border-blue-500 mx-1.5 sm:mx-6">
             Services
           </a>
-          <a routerLink="/pricing"
+          <a routerLink="/orders"
              class="border-b-2 border-transparent hover:text-gray-800 transition-colors duration-300 transform dark:hover:text-gray-200 hover:border-blue-500 mx-1.5 sm:mx-6">
-            Pricing
+            Orders
           </a>
           <a routerLink="/blog"
              class="border-b-2 border-transparent hover:text-gray-800 transition-colors duration-300 transform dark:hover:text-gray-200 hover:border-blue-500 mx-1.5 sm:mx-6">
@@ -30,12 +30,6 @@ import { AuthService } from '../auth/auth.service';
         </div>
         <div class="flex space-x-4">
           @if (authService.isLoggedIn()) {
-            <!--@if (authService.getUserRole() === 'admin') {
-              <a routerLink="/admin"
-                 class="text-gray-800 dark:text-gray-200 hover:underline">
-                Admin Panel
-              </a> -->
-
             <button type="button" (click)="logout()"
                     class="px-4 py-2 text-sm font-semibold text-white bg-blue-500 rounded hover:bg-blue-600">
               Logout

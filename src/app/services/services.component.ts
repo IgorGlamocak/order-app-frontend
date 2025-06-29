@@ -1,60 +1,127 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {ServicesService} from './services.service';
-import {AsyncPipe} from '@angular/common';
-import {SchedulerComponent} from './scheduler/scheduler.component';
-
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Service } from './services.model';
+import { OrdersService } from '../orders/orders.service';
 
 @Component({
-  selector: 'app-services',
-  imports: [
-    AsyncPipe,
-    SchedulerComponent
-  ],
+  selector: 'app-description',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   template: `
-      <!-- Container to center and pad the grid -->
-    <div class="mx-auto max-w-7xl px-4 py-10">
-      <h2 class="text-3xl font-bold mb-8 dark:text-white">Our Services</h2>
+    <button
+      (click)="openScheduleModal(service)"
+      class="px-3 py-1 text-sm font-semibold text-white uppercase bg-gray-800 rounded hover:bg-gray-700 focus:outline-none"
+    >
+      Details
+    </button>
 
-      <!-- GRID WRAPPER -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        @for (service of services$ | async; track service.id) {
-          <!-- CARD -->
-          <div class="flex flex-col bg-white rounded-lg shadow-lg overflow-hidden dark:bg-gray-800">
-            <!-- IMAGE -->
+    @if (isModalOpen) {
+      <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-3xl p-6 relative">
+          <button
+            (click)="closeScheduleModal()"
+            class="absolute top-4 right-4 text-2xl text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white"
+          >&times;</button>
+
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
+              {{ service?.serviceName }}
+            </h2>
             <div
-              class="h-48 bg-gray-200 bg-cover bg-center"
-              style="background-image: url('https://images.unsplash.com/photo-1521903062400-b80f2cb8cb9d?...');">
-            </div>
-            <!-- BODY -->
-            <div class="flex-1 p-4 flex flex-col">
-              <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">
-                {{ service.serviceName }}
-              </h3>
-              <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-                {{ service.description }}
-              </p>
-              <!-- FOOTER -->
-              <div class="mt-auto flex items-center justify-between">
-                <span class="text-lg font-bold text-gray-800 dark:text-gray-200">
-                  From {{ service.price }}€
-                </span>
-                <app-scheduler [service]="service"></app-scheduler>
-              </div>
+              class="border border-gray-400 px-3 py-1 rounded text-sm text-gray-700 dark:text-gray-300"
+            >
+              Execution time: {{ service?.executionTime ?? '—' }}
             </div>
           </div>
-        }
-        @empty {
-          <p class="col-span-full text-center text-gray-500 dark:text-gray-400">
-            You are not logged in
-          </p>
-        }
-      </div>
-    </div>
-  `,
-  styles: ``
-})
-export class ServicesComponent {
-  services = inject(ServicesService);
 
-  services$= this.services.getAll();
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="md:w-1/3">
+              <img
+                [src]="service?.imageUrl ?? placeholderImg"
+                alt="{{ service?.serviceName }}"
+                class="w-full h-auto rounded object-cover"
+              />
+            </div>
+            <div class="md:w-2/3 text-gray-700 dark:text-gray-300">
+              {{ service?.description }}
+            </div>
+          </div>
+
+          <div class="mt-8 flex flex-col md:flex-row gap-6">
+            <div class="md:w-1/2">
+              <label for="requirements" class="block mb-2 text-gray-700 dark:text-gray-200">
+                Additional requirements:
+              </label>
+              <textarea
+                id="requirements"
+                [(ngModel)]="additionalRequirements"
+                rows="4"
+                class="w-full border border-gray-400 rounded p-2 dark:bg-gray-700 dark:text-gray-200"
+              ></textarea>
+            </div>
+            <div class="md:w-1/2 flex flex-col justify-between">
+              <div>
+                <label for="priceSelect" class="block mb-2 text-gray-700 dark:text-gray-200">
+                  Price:
+                </label>
+                <select
+                  id="priceSelect"
+                  [(ngModel)]="selectedPrice"
+                  class="w-full border border-gray-400 rounded p-2 dark:bg-gray-700 dark:text-gray-200"
+                >
+                  <option [value]="service?.price">
+                    Basic ({{ service?.price }}$)
+                  </option>
+                </select>
+              </div>
+              <button
+                (click)="checkout()"
+                class="mt-4 md:mt-0 bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 rounded transition"
+              >
+                Checkout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  `,
+})
+export class DescriptionComponent {
+  @Input() service?: Service;
+
+  isModalOpen = false;
+  placeholderImg = 'https://img.freepik.com/premium-vector/service-outline-doodle-design-illustration-symbol-white-background-eps-10-file_848977-787.jpg';
+  additionalRequirements = '';
+  selectedPrice?: number;
+  quantity = 1;
+
+  constructor(private orders: OrdersService) {}
+
+  openScheduleModal(svc?: Service) {
+    if (!svc) return;
+    this.service = svc;
+    this.selectedPrice = svc.price;
+    this.quantity = 1;
+    this.isModalOpen = true;
+  }
+
+  closeScheduleModal() {
+    this.isModalOpen = false;
+  }
+
+  checkout() {
+    if (!this.service) return;
+    const dto = {
+      serviceId: this.service.id,
+      quantity: this.quantity,
+      totalPrice: Number(this.selectedPrice),
+    };
+    this.orders.createOrder(dto).subscribe({
+      next: order => console.log('Order created', order),
+      error: err => console.error('Failed to create order', err),
+      complete: () => this.closeScheduleModal(),
+    });
+  }
 }

@@ -1,33 +1,29 @@
-import { Component, InputSignal, input } from '@angular/core';
+import { Component, Input, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Service } from '../services.model';
 import { OrdersService } from '../../orders/orders.service';
 
 @Component({
-  selector: 'app-scheduler',
+  selector: 'app-description',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   template: `
-    <!-- Details button -->
     <button
-      (click)="openScheduleModal(service())"
+      (click)="openScheduleModal(service)"
       class="px-3 py-1 text-sm font-semibold text-white uppercase bg-gray-800 rounded hover:bg-gray-700 focus:outline-none">
       Details
     </button>
 
-    <!-- Modal overlay -->
     @if (isModalOpen) {
       <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-        <!-- Modal window -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-3xl p-6 relative">
-          <!-- Close icon -->
           <button
             (click)="closeScheduleModal()"
             class="absolute top-4 right-4 text-2xl leading-none text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white">
             &times;
           </button>
 
-          <!-- Header: Title and execution time -->
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
               {{ selectedService?.serviceName }}
@@ -38,7 +34,6 @@ import { OrdersService } from '../../orders/orders.service';
             </div>
           </div>
 
-          <!-- Body: image + description -->
           <div class="flex flex-col md:flex-row gap-6">
             <div class="md:w-1/3">
               <img
@@ -52,9 +47,7 @@ import { OrdersService } from '../../orders/orders.service';
             </div>
           </div>
 
-          <!-- Footer: requirements + price + checkout -->
           <div class="mt-8 flex flex-col md:flex-row gap-6">
-            <!-- Additional requirements -->
             <div class="md:w-1/2">
               <label for="requirements" class="block mb-2 text-gray-700 dark:text-gray-200">
                 Additional requirements:
@@ -66,8 +59,6 @@ import { OrdersService } from '../../orders/orders.service';
                 class="w-full border border-gray-400 rounded p-2 dark:bg-gray-700 dark:text-gray-200"
               ></textarea>
             </div>
-
-            <!-- Price selector + checkout -->
             <div class="md:w-1/2 flex flex-col justify-between">
               <div>
                 <label for="priceSelect" class="block mb-2 text-gray-700 dark:text-gray-200">
@@ -81,7 +72,6 @@ import { OrdersService } from '../../orders/orders.service';
                   <option [value]="selectedService?.price">
                     Basic ({{ selectedService?.price }}$)
                   </option>
-                  <!-- you can add more tiers here -->
                 </select>
               </div>
               <button (click)="checkout()" class="bg-orange-600 text-white px-4 py-2 rounded">
@@ -95,8 +85,8 @@ import { OrdersService } from '../../orders/orders.service';
   `,
   styles: []
 })
-export class SchedulerComponent {
-  service: InputSignal<Service | undefined> = input();
+export class DescriptionComponent {
+  @Input() service?: Service;
 
   isModalOpen = false;
   selectedService?: Service;
@@ -108,7 +98,7 @@ export class SchedulerComponent {
 
   constructor(private orders: OrdersService) {}
 
-  openScheduleModal(svc: Service | undefined){
+  openScheduleModal(svc: Service | undefined): void {
     if (!svc) return;
     this.selectedService = svc;
     this.selectedPrice = svc.price;
@@ -121,24 +111,19 @@ export class SchedulerComponent {
     this.selectedService = undefined;
   }
 
-  checkout() {
+  checkout(): void {
     if (!this.selectedService) return;
 
     const dto = {
       serviceId: this.selectedService.id,
       quantity: this.quantity,
-      totalPrice: this.selectedPrice!
+      totalPrice: Number(this.selectedPrice)
     };
+
     this.orders.createOrder(dto).subscribe({
-      next: order => {
-        console.log('Order created', order);
-      },
-      error: err => {
-        console.error('Failed to create order', err);
-      },
-      complete: () => {
-        this.closeScheduleModal();
-      }
+      next: order => console.log('Order created', order),
+      error: err => console.error('Failed to create order', err),
+      complete: () => this.closeScheduleModal()
     });
   }
 }
