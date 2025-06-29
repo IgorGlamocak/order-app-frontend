@@ -1,127 +1,181 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Service } from './services.model';
-import { OrdersService } from '../orders/orders.service';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { CommonModule, AsyncPipe } from '@angular/common';
+import { ServicesService, Service } from './services.service';
+import { ServiceFormModalComponent } from './service-form-modal.component';
+import { DescriptionComponent } from './info/description.component';
 
 @Component({
-  selector: 'app-description',
+  selector: 'app-services',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    AsyncPipe,
+    ServiceFormModalComponent,
+    DescriptionComponent,
+  ],
   template: `
-    <button
-      (click)="openScheduleModal(service)"
-      class="px-3 py-1 text-sm font-semibold text-white uppercase bg-gray-800 rounded hover:bg-gray-700 focus:outline-none"
-    >
-      Details
-    </button>
-
-    @if (isModalOpen) {
-      <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-3xl p-6 relative">
-          <button
-            (click)="closeScheduleModal()"
-            class="absolute top-4 right-4 text-2xl text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white"
-          >&times;</button>
-
-          <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
-              {{ service?.serviceName }}
-            </h2>
-            <div
-              class="border border-gray-400 px-3 py-1 rounded text-sm text-gray-700 dark:text-gray-300"
+    <div class="p-6">
+      <div class="flex justify-end mb-6">
+        <button
+          class="px-4 py-2 bg-green-600 text-white rounded"
+          (click)="openCreate()"
+        >
+          Add Service
+        </button>
+      </div>
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto justify-center"
+      >
+        @for (service of services$ | async; track service.id) {
+          <div
+            class="flex flex-col bg-white rounded-lg shadow-lg overflow-hidden dark:bg-gray-800 relative"
+          >
+            <button
+              class="absolute top-2 right-2 p-1 text-2xl font-bold text-gray-500 hover:text-white"
+              (click)="openMenu(service, $event)"
             >
-              Execution time: {{ service?.executionTime ?? '—' }}
-            </div>
-          </div>
-
-          <div class="flex flex-col md:flex-row gap-6">
-            <div class="md:w-1/3">
-              <img
-                [src]="service?.imageUrl ?? placeholderImg"
-                alt="{{ service?.serviceName }}"
-                class="w-full h-auto rounded object-cover"
-              />
-            </div>
-            <div class="md:w-2/3 text-gray-700 dark:text-gray-300">
-              {{ service?.description }}
-            </div>
-          </div>
-
-          <div class="mt-8 flex flex-col md:flex-row gap-6">
-            <div class="md:w-1/2">
-              <label for="requirements" class="block mb-2 text-gray-700 dark:text-gray-200">
-                Additional requirements:
-              </label>
-              <textarea
-                id="requirements"
-                [(ngModel)]="additionalRequirements"
-                rows="4"
-                class="w-full border border-gray-400 rounded p-2 dark:bg-gray-700 dark:text-gray-200"
-              ></textarea>
-            </div>
-            <div class="md:w-1/2 flex flex-col justify-between">
-              <div>
-                <label for="priceSelect" class="block mb-2 text-gray-700 dark:text-gray-200">
-                  Price:
-                </label>
-                <select
-                  id="priceSelect"
-                  [(ngModel)]="selectedPrice"
-                  class="w-full border border-gray-400 rounded p-2 dark:bg-gray-700 dark:text-gray-200"
-                >
-                  <option [value]="service?.price">
-                    Basic ({{ service?.price }}$)
-                  </option>
-                </select>
-              </div>
-              <button
-                (click)="checkout()"
-                class="mt-4 md:mt-0 bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 rounded transition"
+              ⋮
+            </button>
+            <div
+              class="h-48 bg-gray-200 bg-cover bg-center"
+              [style.background-image]="
+                'url(' + (service.imageUrl || placeholderImg) + ')'
+              "
+            ></div>
+            <div class="flex-1 p-4 flex flex-col">
+              <h3
+                class="text-xl font-semibold mb-2 text-gray-800 dark:text-white"
               >
-                Checkout
+                {{ service.serviceName }}
+              </h3>
+              <p
+                class="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3"
+              >
+                {{ service.description }}
+              </p>
+              <div class="mt-auto flex items-center justify-between">
+                <span
+                  class="text-lg font-bold text-gray-800 dark:text-gray-200"
+                >
+                  From {{ service.price }}€
+                </span>
+                <app-description [service]="service"></app-description>
+              </div>
+            </div>
+          </div>
+        } @empty {
+          <p class="col-span-full text-center text-gray-600">
+            No services available.
+          </p>
+        }
+      </div>
+      @if (menuOpen()) {
+        <div class="fixed inset-0" (click)="closeMenu()"></div>
+        <div
+          class="absolute z-50 bg-white rounded shadow p-2"
+          [style.top.px]="menuPos.y"
+          [style.left.px]="menuPos.x"
+        >
+          <button
+            class="block w-full text-left p-1 hover:bg-gray-100"
+            (click)="edit()"
+          >
+            Edit
+          </button>
+          <button
+            class="block w-full text-left p-1 hover:bg-gray-100"
+            (click)="confirmDelete()"
+          >
+            Delete
+          </button>
+        </div>
+      }
+      @if (confirmOpen()) {
+        <div
+          class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        >
+          <div class="bg-white p-6 rounded shadow-lg">
+            <p class="mb-4">Really delete this service?</p>
+            <div class="flex justify-end space-x-2">
+              <button (click)="cancelDelete()">No</button>
+              <button
+                class="px-3 py-1 bg-red-600 text-white rounded"
+                (click)="delete()"
+              >
+                Yes
               </button>
             </div>
           </div>
         </div>
-      </div>
-    }
+      }
+      <app-service-form-modal
+        [isOpen]="formOpen()"
+        [editing]="isEditing()"
+        [initial]="selected()"
+        (closed)="closeForm()"
+        (saved)="reload()"
+      ></app-service-form-modal>
+    </div>
   `,
 })
-export class DescriptionComponent {
-  @Input() service?: Service;
+export class ServicesComponent implements OnInit {
+  private svc = inject(ServicesService);
+  services$ = this.svc.getAll();
+  placeholderImg =
+    'https://img.freepik.com/premium-vector/service-outline-doodle-design-illustration-symbol_848977-787.jpg';
 
-  isModalOpen = false;
-  placeholderImg = 'https://img.freepik.com/premium-vector/service-outline-doodle-design-illustration-symbol-white-background-eps-10-file_848977-787.jpg';
-  additionalRequirements = '';
-  selectedPrice?: number;
-  quantity = 1;
+  formOpen = signal(false);
+  isEditing = signal(false);
+  selected = signal<Service | null>(null);
 
-  constructor(private orders: OrdersService) {}
+  menuOpen = signal(false);
+  menuPos = { x: 0, y: 0 };
 
-  openScheduleModal(svc?: Service) {
+  confirmOpen = signal(false);
+
+  ngOnInit() {}
+
+  openCreate() {
+    this.selected.set(null);
+    this.isEditing.set(false);
+    this.formOpen.set(true);
+  }
+
+  openMenu(service: Service, e: MouseEvent) {
+    this.selected.set(service);
+    this.menuPos = { x: e.clientX, y: e.clientY };
+    this.menuOpen.set(true);
+  }
+  closeMenu() {
+    this.menuOpen.set(false);
+  }
+
+  edit() {
+    this.isEditing.set(true);
+    this.formOpen.set(true);
+    this.closeMenu();
+  }
+
+  confirmDelete() {
+    this.confirmOpen.set(true);
+    this.closeMenu();
+  }
+  cancelDelete() {
+    this.confirmOpen.set(false);
+  }
+  delete() {
+    const svc = this.selected();
     if (!svc) return;
-    this.service = svc;
-    this.selectedPrice = svc.price;
-    this.quantity = 1;
-    this.isModalOpen = true;
-  }
-
-  closeScheduleModal() {
-    this.isModalOpen = false;
-  }
-
-  checkout() {
-    if (!this.service) return;
-    const dto = {
-      serviceId: this.service.id,
-      quantity: this.quantity,
-      totalPrice: Number(this.selectedPrice),
-    };
-    this.orders.createOrder(dto).subscribe({
-      next: order => console.log('Order created', order),
-      error: err => console.error('Failed to create order', err),
-      complete: () => this.closeScheduleModal(),
+    this.svc.deleteService(svc.id).subscribe(() => {
+      this.confirmOpen.set(false);
+      this.reload();
     });
+  }
+
+  closeForm() {
+    this.formOpen.set(false);
+  }
+  reload() {
+    this.services$ = this.svc.getAll();
   }
 }

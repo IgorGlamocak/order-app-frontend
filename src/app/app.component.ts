@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import {FooterComponent} from './components/footer.component';
-import {HeaderComponent} from './components/header.component';
+import { FooterComponent } from './components/footer.component';
+import { HeaderComponent } from './components/header.component';
 
 @Component({
   selector: 'app-root',
@@ -9,11 +9,11 @@ import {HeaderComponent} from './components/header.component';
   template: `
     <app-header></app-header>
     <main class="flex flex-col flex-grow mt-10">
-    <router-outlet />
+      <router-outlet />
     </main>
     <app-footer class="flex flex-col"></app-footer>
   `,
-  styles: ``
+  styles: ``,
 })
 export class AppComponent {
   title = 'order-app-frontend';

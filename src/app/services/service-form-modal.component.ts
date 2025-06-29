@@ -24,71 +24,74 @@ import { Service } from './services.model';
   imports: [CommonModule, ReactiveFormsModule],
   template: `
     @if (isOpen) {
-    <div
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-    >
-      <form
-        [formGroup]="form"
-        (ngSubmit)="onSubmit()"
-        class="bg-white p-6 rounded shadow-lg w-96"
+      <div
+        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
       >
-        <h2 class="text-xl font-bold mb-4">
-          {{ editing ? 'Edit Service' : 'Add Service' }}
-        </h2>
+        <form
+          [formGroup]="form"
+          (ngSubmit)="onSubmit()"
+          class="bg-white p-6 rounded shadow-lg w-96"
+        >
+          <h2 class="text-xl font-bold mb-4">
+            {{ editing ? 'Edit Service' : 'Add Service' }}
+          </h2>
 
-        <label class="block mb-2">
-          Name
-          <input
-            formControlName="serviceName"
-            class="w-full border p-1 rounded"
-          />
-        </label>
+          <label class="block mb-2">
+            Name
+            <input
+              formControlName="serviceName"
+              class="w-full border p-1 rounded"
+            />
+          </label>
 
-        <label class="block mb-2">
-          Description
-          <textarea
-            formControlName="description"
-            class="w-full border p-1 rounded"
-          ></textarea>
-        </label>
+          <label class="block mb-2">
+            Description
+            <textarea
+              formControlName="description"
+              class="w-full border p-1 rounded"
+            ></textarea>
+          </label>
 
-        <label class="block mb-2">
-          Price
-          <input
-            type="number"
-            formControlName="price"
-            class="w-full border p-1 rounded"
-          />
-        </label>
+          <label class="block mb-2">
+            Price
+            <input
+              type="number"
+              formControlName="price"
+              class="w-full border p-1 rounded"
+            />
+          </label>
 
-        <label class="block mb-2">
-          Execution Time
-          <input
-            formControlName="executionTime"
-            placeholder="e.g. 7d"
-            class="w-full border p-1 rounded"
-          />
-        </label>
+          <label class="block mb-2">
+            Execution Time
+            <input
+              formControlName="executionTime"
+              placeholder="e.g. 7d"
+              class="w-full border p-1 rounded"
+            />
+          </label>
 
-        <label class="block mb-4">
-          Image URL
-          <input formControlName="imageUrl" class="w-full border p-1 rounded" />
-        </label>
+          <label class="block mb-4">
+            Image URL
+            <input
+              formControlName="imageUrl"
+              class="w-full border p-1 rounded"
+            />
+          </label>
 
-        <div class="flex justify-end space-x-2">
-          <button type="button" (click)="close()" class="px-3 py-1">
-            Cancel
-          </button>
-          <button
-            type="submit"
-            [disabled]="form.invalid"
-            class="px-3 py-1 bg-blue-600 text-white rounded"
-          >
-            {{ editing ? 'Save' : 'Create' }}
-          </button>
-        </div>
-      </form>
-    </div>
+          <div class="flex justify-end space-x-2">
+            <button type="button" (click)="close()" class="px-3 py-1">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              [disabled]="form.invalid"
+              class="px-3 py-1 bg-blue-600 text-white rounded"
+            >
+              {{ editing ? 'Save' : 'Create' }}
+            </button>
+          </div>
+        </form>
+      </div>
     }
   `,
 })
@@ -138,7 +141,7 @@ export class ServiceFormModalComponent implements OnChanges {
         tap(() => {
           this.saved.emit();
           this.close();
-        })
+        }),
       )
       .subscribe();
   }

@@ -12,7 +12,6 @@ export interface User {
   orders: Order[];
 }
 
-
 export interface Order {
   id: number;
 
@@ -42,5 +41,3 @@ export interface Service {
 
   orders: Order[];
 }
-
-

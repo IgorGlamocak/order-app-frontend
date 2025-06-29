@@ -1,14 +1,14 @@
-import {inject, Injectable} from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {environment} from '../environment';
-import {catchError, of, tap, throwError} from 'rxjs';
-import {routes} from '../app.routes';
-import {Router} from '@angular/router';
+import { environment } from '../environment';
+import { catchError, of, tap, throwError } from 'rxjs';
+import { routes } from '../app.routes';
+import { Router } from '@angular/router';
 //import * as jwt_decode from 'jwt-decode';
 
 export interface Auth {
-  message:string,
-  token:string
+  message: string;
+  token: string;
 }
 
 interface JwtPayload {
@@ -16,7 +16,7 @@ interface JwtPayload {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private baseUrl = environment.baseUrl;
@@ -27,8 +27,7 @@ export class AuthService {
   }
 
   login(data: { email: string; password: string }) {
-
-  /*.subscribe({
+    /*.subscribe({
       next:(response) => {
         localStorage.setItem('token', response.token)
         console.log('Login successful', response);
@@ -44,15 +43,15 @@ export class AuthService {
     */
     // Vrne Observable z { access_token: string }
     return this.http.post<Auth>(`${this.baseUrl}/auth/login`, data).pipe(
-      tap(res => {
+      tap((res) => {
         localStorage.setItem('token', res.token);
         console.log('Login successful', res);
       }),
       tap(() => this.router.navigate([''])),
-      catchError(err => {
+      catchError((err) => {
         console.error('Login failed.', err);
         return of('Login failed.');
-      })
+      }),
     );
   }
 
