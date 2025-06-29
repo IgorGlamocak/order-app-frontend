@@ -11,14 +11,14 @@ import { tap } from 'rxjs';
   template: `
     <div class="p-6 max-w-4xl mx-auto">
       <h2 class="text-2xl font-bold mb-4">
-        {{ role === 'admin' ? 'All Orders' : 'My Orders' }}
+        {{ authService.isAdmin() ? 'All Orders' : 'My Orders' }}
       </h2>
       <ul class="space-y-4">
         @for (order of orders$ | async; track order.id) {
           <li class="border rounded-lg p-4 flex items-start">
             <div class="flex-1">
-              @if (role === 'admin') {
-                <div class="mb-2 p-2 bg-gray-100 rounded">
+              @if (authService.isAdmin()) {
+                <div class="mb-2">
                   <strong>User:</strong>
                   {{ order.user.fullName }} ({{ order.user.email }})
                 </div>
@@ -37,7 +37,7 @@ import { tap } from 'rxjs';
               </div>
             </div>
             <div class="ml-4 self-center">
-              @if (role == 'admin'){
+              @if (authService.isAdmin()){
               <button
                 (click)="onDelete(order.id)"
                 class="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-500"
@@ -57,11 +57,12 @@ import { tap } from 'rxjs';
   `,
 })
 export class OrdersComponent implements OnInit {
+  constructor(
+    public authService:AuthService
+  ) {}
   private ordersService = inject(OrdersService);
-  private authService = inject(AuthService);
 
   orders$ = this.ordersService.getOrders();
-  role: string | null = this.authService.getUserRole();
 
   ngOnInit() {}
 

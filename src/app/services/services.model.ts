@@ -10,6 +10,8 @@ export interface User {
   avatar?: string;
 
   orders: Order[];
+
+  role: string;
 }
 
 export interface Order {

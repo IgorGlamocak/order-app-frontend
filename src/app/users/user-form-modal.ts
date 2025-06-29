@@ -15,11 +15,11 @@ import {
   FormGroup,
 } from '@angular/forms';
 import { tap } from 'rxjs';
-import { ServicesService } from './services.service';
-import { Service } from './services.model';
+import { UsersService } from './users.service';
+import { User } from './users.service';
 
 @Component({
-  selector: 'app-service-form-modal',
+  selector: 'app-user-form-modal',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
@@ -33,48 +33,41 @@ import { Service } from './services.model';
           class="bg-white p-6 rounded shadow-lg w-96"
         >
           <h2 class="text-xl font-bold mb-4">
-            {{ editing ? 'Edit Service' : 'Add Service' }}
+            {{ editing ? 'Edit User' : 'Add User' }}
           </h2>
 
           <label class="block mb-2">
-            Name
+            Full Name
             <input
-              formControlName="serviceName"
+              formControlName="fullName"
               class="w-full border p-1 rounded"
             />
           </label>
 
           <label class="block mb-2">
-            Description
-            <textarea
-              formControlName="description"
-              class="w-full border p-1 rounded"
-            ></textarea>
-          </label>
-
-          <label class="block mb-2">
-            Price
+            Email
             <input
-              type="number"
-              formControlName="price"
+              type="email"
+              formControlName="email"
               class="w-full border p-1 rounded"
             />
           </label>
 
           <label class="block mb-2">
-            Execution Time
-            <input
-              formControlName="executionTime"
-              placeholder="e.g. 7d"
-              class="w-full border p-1 rounded"
-            />
+            Role
+            <select formControlName="role" class="w-full border p-1 rounded">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
           </label>
 
           <label class="block mb-4">
-            Image URL
+            Password
             <input
-              formControlName="imageUrl"
+              type="password"
+              formControlName="password"
               class="w-full border p-1 rounded"
+              [placeholder]="editing ? '(leave blank to keep current)' : ''"
             />
           </label>
 
@@ -95,46 +88,52 @@ import { Service } from './services.model';
     }
   `,
 })
-export class ServiceFormModalComponent implements OnChanges {
+export class UserFormModalComponent implements OnChanges {
   @Input() isOpen = false;
   @Input() editing = false;
-  @Input() initial: Service | null = null;
+  @Input() initial: User | null = null;
 
   @Output() saved = new EventEmitter<void>();
   @Output() closed = new EventEmitter<void>();
 
   private fb = inject(FormBuilder);
-  private svc = inject(ServicesService);
+  private svc = inject(UsersService);
 
   form: FormGroup = this.fb.group({
-    serviceName: [''],
-    description: [''],
-    price: [0],
-    executionTime: [''],
-    imageUrl: [''],
+    fullName: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
+    role: ['user', Validators.required],
+    password: [''],
   });
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.editing && this.initial) {
       this.form.patchValue({
-        serviceName: this.initial.serviceName,
-        description: this.initial.description,
-        price: this.initial.price,
-        executionTime: this.initial.executionTime,
-        imageUrl: this.initial.imageUrl,
+        fullName: this.initial.fullName,
+        email: this.initial.email,
+        role: this.initial.role,
+        password: '',
       });
     }
     if (!this.editing) {
-      this.form.reset({ price: 0 });
+      this.form.reset({ role: 'user', password: '' });
     }
   }
 
   onSubmit() {
-    const dto = this.form.value as Omit<Service, 'id'>;
-    const op$ =
-      this.editing && this.initial
-        ? this.svc.updateService(this.initial.id, dto)
-        : this.svc.createService(dto);
+    const raw = this.form.value as Partial<User & { password: string }>;
+    const dto: any = {
+      fullName: raw.fullName,
+      email: raw.email,
+      role: raw.role,
+    };
+    if (!this.editing || raw.password) {
+      dto.password = raw.password;
+    }
+
+    const op$ = this.editing && this.initial
+      ? this.svc.update(this.initial.id, dto)
+      : this.svc.create(dto);
 
     op$
       .pipe(
