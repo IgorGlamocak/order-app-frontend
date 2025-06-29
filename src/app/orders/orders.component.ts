@@ -37,12 +37,14 @@ import { tap } from 'rxjs';
               </div>
             </div>
             <div class="ml-4 self-center">
+              @if (role == 'admin'){
               <button
                 (click)="onDelete(order.id)"
                 class="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-500"
               >
                 Delete
               </button>
+              }
             </div>
           </li>
         } @empty {

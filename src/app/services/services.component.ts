@@ -3,6 +3,7 @@ import { CommonModule, AsyncPipe } from '@angular/common';
 import { ServicesService, Service } from './services.service';
 import { ServiceFormModalComponent } from './service-form-modal.component';
 import { DescriptionComponent } from './info/description.component';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-services',
@@ -15,6 +16,7 @@ import { DescriptionComponent } from './info/description.component';
   ],
   template: `
     <div class="p-6">
+      @if (role === 'admin') {
       <div class="flex justify-end mb-6">
         <button
           class="px-4 py-2 bg-green-600 text-white rounded"
@@ -23,6 +25,7 @@ import { DescriptionComponent } from './info/description.component';
           Add Service
         </button>
       </div>
+      }
       <div
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto justify-center"
       >
@@ -30,12 +33,14 @@ import { DescriptionComponent } from './info/description.component';
           <div
             class="flex flex-col bg-white rounded-lg shadow-lg overflow-hidden dark:bg-gray-800 relative"
           >
+          @if (role === 'admin') {
             <button
               class="absolute top-2 right-2 p-1 text-2xl font-bold text-gray-500 hover:text-white"
               (click)="openMenu(service, $event)"
             >
               ⋮
             </button>
+          }
             <div
               class="h-48 bg-gray-200 bg-cover bg-center"
               [style.background-image]="
@@ -121,8 +126,10 @@ import { DescriptionComponent } from './info/description.component';
 export class ServicesComponent implements OnInit {
   private svc = inject(ServicesService);
   services$ = this.svc.getAll();
-  placeholderImg =
-    'https://img.freepik.com/premium-vector/service-outline-doodle-design-illustration-symbol_848977-787.jpg';
+  placeholderImg ='https://img.freepik.com/premium-vector/service-outline-doodle-design-illustration-symbol_848977-787.jpg';
+
+  private authService = inject(AuthService);
+  role: string | null = this.authService.getUserRole();
 
   formOpen = signal(false);
   isEditing = signal(false);
