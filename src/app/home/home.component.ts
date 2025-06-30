@@ -1,29 +1,28 @@
 import { Component } from '@angular/core';
-import { FooterComponent } from '../components/footer.component';
-import { HeaderComponent } from '../components/header.component';
 
 @Component({
   selector: 'app-home',
   imports: [],
   template: `
-    <section class="bg-white dark:bg-gray-900">
-      <div class="container px-6 py-10 mx-auto">
+    <section class="dark:bg-gray-900 pt-0">
+      <div class="container px-6 pt-20 pb-10 mx-auto">
         <div class="xl:flex xl:items-center xL:-mx-4">
           <div class="xl:w-1/2 xl:mx-4">
             <h1
               class="text-2xl font-semibold text-gray-800 capitalize lg:text-3xl dark:text-white"
             >
-              Our Team
+              Welcome to Our Service Platform
             </h1>
 
             <p class="max-w-2xl mt-4 text-gray-500 dark:text-gray-300">
-              Our hand-picked group of professionals brings together diverse
-              talents and shared passion for excellence. From cutting-edge
-              full-stack development to inspired graphic design, each member is
-              committed to delivering top-tier solutions and exceptional
-              service. We collaborate closely, harnessing our collective
-              expertise to transform ideas into reality and ensure every project
-              exceeds expectations.
+              Discover a modern web application built to simplify service
+              booking and management. Whether you need IT assistance, web
+              development, or design expertise, our platform connects you with
+              experienced professionals in just a few clicks.
+              <br /><br />
+              Register or log in to unlock full access to our services and enjoy
+              a streamlined, user-friendly experience. We're here to help your
+              projects succeed!
             </p>
           </div>
 
@@ -33,36 +32,38 @@ import { HeaderComponent } from '../components/header.component';
             <div>
               <img
                 class="object-cover rounded-xl aspect-square"
-                src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
-                alt=""
+                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=500&q=80"
+                alt="Laptop with code"
               />
 
-              <h1
+              <h2
                 class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white"
               >
-                John Doe
-              </h1>
+                Easy Booking
+              </h2>
 
-              <p class="mt-2 text-gray-500 capitalize dark:text-gray-300">
-                Full stack developer
+              <p class="mt-2 text-gray-500 dark:text-gray-300">
+                Browse and schedule services quickly and easily, all in one
+                place.
               </p>
             </div>
 
             <div>
               <img
                 class="object-cover rounded-xl aspect-square"
-                src="https://images.unsplash.com/photo-1499470932971-a90681ce8530?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
-                alt=""
+                src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=500&q=80"
+                alt="Teamwork"
               />
 
-              <h1
+              <h2
                 class="mt-4 text-2xl font-semibold text-gray-700 capitalize dark:text-white"
               >
-                Mia
-              </h1>
+                Trusted Professionals
+              </h2>
 
-              <p class="mt-2 text-gray-500 capitalize dark:text-gray-300">
-                Graphic Designer
+              <p class="mt-2 text-gray-500 dark:text-gray-300">
+                Work with skilled experts dedicated to high-quality results and
+                great support.
               </p>
             </div>
           </div>

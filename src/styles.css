@@ -1,2 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
+
+/* tailwind safelist hack: force these classes to be generated */
+@layer utilities {
+  .border-custom-blue { border-color: #0066ff; }
+  .hover\:border-custom-blue:hover { border-color: #0066ff; }
+}
+
+body {
+  @apply bg-gray-900;
+}
+

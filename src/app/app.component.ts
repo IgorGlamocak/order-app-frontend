@@ -8,7 +8,7 @@ import { HeaderComponent } from './components/header.component';
   imports: [RouterOutlet, FooterComponent, HeaderComponent],
   template: `
     <app-header></app-header>
-    <main class="flex flex-col flex-grow mt-10">
+    <main class="flex flex-col flex-grow">
       <router-outlet />
     </main>
     <app-footer class="flex flex-col"></app-footer>
